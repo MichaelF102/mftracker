@@ -249,4 +249,4 @@ display_df["PnL %"] = display_df["PnL %"].round(2)
 # DISPLAY - PORTFOLIO TABLE
 # -----------------------------
 st.subheader("💰 Portfolio Performance (Using Units)")
-st.dataframe(styled_portfolio_df.tail(50), width="stretch")
+st.dataframe(display_df.tail(50), width="stretch")
