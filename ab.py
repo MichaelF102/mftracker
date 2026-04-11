@@ -236,21 +236,14 @@ portfolio_df = portfolio_df.dropna()
 # -----------------------------
 # STYLE PORTFOLIO TABLE
 # -----------------------------
-styled_portfolio_df = (
-    portfolio_df[
-        ["iSIF", "Fund Value", "Daily Change ₹", "Daily Change %", "PnL ₹", "PnL %"]
-    ]
-    .style
-    .map(color_returns, subset=["Daily Change ₹", "Daily Change %", "PnL ₹", "PnL %"])
-    .format({
-        "iSIF": "{:.2f}",
-        "Fund Value": "₹{:,.0f}",
-        "Daily Change ₹": "₹{:,.0f}",
-        "Daily Change %": "{:.2f}%",
-        "PnL ₹": "₹{:,.0f}",
-        "PnL %": "{:.2f}%"
-    })
-)
+display_df["iSIF"] = display_df["iSIF"].round(2)
+
+display_df["Fund Value"] = display_df["Fund Value"].round(0)
+display_df["Daily Change ₹"] = display_df["Daily Change ₹"].round(0)
+display_df["PnL ₹"] = display_df["PnL ₹"].round(0)
+
+display_df["Daily Change %"] = display_df["Daily Change %"].round(2)
+display_df["PnL %"] = display_df["PnL %"].round(2)
 
 # -----------------------------
 # DISPLAY - PORTFOLIO TABLE
