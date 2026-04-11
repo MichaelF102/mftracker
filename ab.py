@@ -174,59 +174,28 @@ st.dataframe(df.tail(50))
 # PERCENTAGE CHANGE
 # -----------------------------
 # -----------------------------
-# PERCENTAGE CHANGE
+# PERCENTAGE CHANGE (NO STYLE)
 # -----------------------------
 pct_df = df.pct_change() * 100
 pct_df.columns = ["Fund %", "NIFTY %", "SENSEX %"]
 pct_df = pct_df.dropna()
 
-# -----------------------------
-# STYLE FUNCTION
-# -----------------------------
-def color_returns(val):
-    if pd.isna(val):
-        return ""
-    if val > 0:
-        return "color: #16a34a; font-weight: 600;"  # green
-    elif val < 0:
-        return "color: #dc2626; font-weight: 600;"  # red
-    return ""
-
-# Apply styling (UPDATED)
-styled_pct_df = (
-    pct_df.style
-    .map(color_returns)
-    .format("{:.2f}%")
-)
-
-# -----------------------------
-# DISPLAY - PERCENTAGE TABLE
-# -----------------------------
 st.subheader("📊 Daily Percentage Change")
-st.dataframe(styled_pct_df, width="stretch")
+st.dataframe(pct_df.tail(50).round(2), width="stretch")
+
 
 # -----------------------------
 # PORTFOLIO CALCULATIONS
 # -----------------------------
 units = 105365.478
-buy_nav = 9.4903
 initial_investment = 1_000_000
 
 portfolio_df = df.copy()
 
-# Fund Value
 portfolio_df["Fund Value"] = portfolio_df["iSIF"] * units
-
-# Daily Change ₹
 portfolio_df["Daily Change ₹"] = portfolio_df["Fund Value"].diff()
-
-# Daily Change %
 portfolio_df["Daily Change %"] = portfolio_df["Fund Value"].pct_change() * 100
-
-# PnL ₹
 portfolio_df["PnL ₹"] = portfolio_df["Fund Value"] - initial_investment
-
-# PnL %
 portfolio_df["PnL %"] = (
     portfolio_df["Fund Value"] / initial_investment - 1
 ) * 100
@@ -234,10 +203,16 @@ portfolio_df["PnL %"] = (
 portfolio_df = portfolio_df.dropna()
 
 # -----------------------------
-# STYLE PORTFOLIO TABLE
+# CREATE DISPLAY DF (FIXED ✅)
+# -----------------------------
+display_df = portfolio_df[
+    ["iSIF", "Fund Value", "Daily Change ₹", "Daily Change %", "PnL ₹", "PnL %"]
+].copy()
+
+# -----------------------------
+# ROUND VALUES
 # -----------------------------
 display_df["iSIF"] = display_df["iSIF"].round(2)
-
 display_df["Fund Value"] = display_df["Fund Value"].round(0)
 display_df["Daily Change ₹"] = display_df["Daily Change ₹"].round(0)
 display_df["PnL ₹"] = display_df["PnL ₹"].round(0)
@@ -246,7 +221,7 @@ display_df["Daily Change %"] = display_df["Daily Change %"].round(2)
 display_df["PnL %"] = display_df["PnL %"].round(2)
 
 # -----------------------------
-# DISPLAY - PORTFOLIO TABLE
+# DISPLAY
 # -----------------------------
 st.subheader("💰 Portfolio Performance (Using Units)")
 st.dataframe(display_df.tail(50), width="stretch")
