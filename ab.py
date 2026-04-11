@@ -212,8 +212,8 @@ display_df = portfolio_df[
 # -----------------------------
 # ROUND VALUES
 # -----------------------------
-display_df["iSIF"] = display_df["iSIF"].round(2)
-display_df["Fund Value"] = display_df["Fund Value"].round(0)
+display_df["iSIF"] = display_df["iSIF"]
+display_df["Fund Value"] = display_df["Fund Value"]
 display_df["Daily Change ₹"] = display_df["Daily Change ₹"].round(0)
 display_df["PnL ₹"] = display_df["PnL ₹"].round(0)
 
