@@ -173,6 +173,9 @@ st.dataframe(df.tail(50))
 # -----------------------------
 # PERCENTAGE CHANGE
 # -----------------------------
+# -----------------------------
+# PERCENTAGE CHANGE
+# -----------------------------
 pct_df = df.pct_change() * 100
 pct_df.columns = ["Fund %", "NIFTY %", "SENSEX %"]
 pct_df = pct_df.dropna()
@@ -181,47 +184,76 @@ pct_df = pct_df.dropna()
 # STYLE FUNCTION
 # -----------------------------
 def color_returns(val):
-    if val > 0:
-        return "color: green"
-    elif val < 0:
-        return "color: red"
-    else:
+    if pd.isna(val):
         return ""
+    if val > 0:
+        return "color: #16a34a; font-weight: 600;"  # green
+    elif val < 0:
+        return "color: #dc2626; font-weight: 600;"  # red
+    return ""
 
-# Apply styling
-styled_df = pct_df.style.applymap(color_returns).format("{:.2f}")
+# Apply styling (UPDATED)
+styled_pct_df = (
+    pct_df.style
+    .map(color_returns)
+    .format("{:.2f}%")
+)
 
 # -----------------------------
-# DISPLAY
+# DISPLAY - PERCENTAGE TABLE
 # -----------------------------
 st.subheader("📊 Daily Percentage Change")
-st.dataframe(styled_df)
+st.dataframe(styled_pct_df, width="stretch")
 
+# -----------------------------
+# PORTFOLIO CALCULATIONS
+# -----------------------------
 units = 105365.478
-buy_nav = 9.4903   # from screenshot
+buy_nav = 9.4903
 initial_investment = 1_000_000
 
 portfolio_df = df.copy()
 
-# Actual portfolio value
+# Fund Value
 portfolio_df["Fund Value"] = portfolio_df["iSIF"] * units
 
-# Daily ₹ change
+# Daily Change ₹
 portfolio_df["Daily Change ₹"] = portfolio_df["Fund Value"].diff()
 
-# Daily %
+# Daily Change %
 portfolio_df["Daily Change %"] = portfolio_df["Fund Value"].pct_change() * 100
 
-# Profit / Loss vs initial investment
+# PnL ₹
 portfolio_df["PnL ₹"] = portfolio_df["Fund Value"] - initial_investment
-portfolio_df["PnL %"] = (portfolio_df["Fund Value"] / initial_investment - 1) * 100
+
+# PnL %
+portfolio_df["PnL %"] = (
+    portfolio_df["Fund Value"] / initial_investment - 1
+) * 100
 
 portfolio_df = portfolio_df.dropna()
 
-st.subheader("💰 Portfolio Performance (Using Units)")
-
-st.dataframe(
+# -----------------------------
+# STYLE PORTFOLIO TABLE
+# -----------------------------
+styled_portfolio_df = (
     portfolio_df[
         ["iSIF", "Fund Value", "Daily Change ₹", "Daily Change %", "PnL ₹", "PnL %"]
-    ].tail(50)
+    ]
+    .style
+    .map(color_returns, subset=["Daily Change ₹", "Daily Change %", "PnL ₹", "PnL %"])
+    .format({
+        "iSIF": "{:.2f}",
+        "Fund Value": "₹{:,.0f}",
+        "Daily Change ₹": "₹{:,.0f}",
+        "Daily Change %": "{:.2f}%",
+        "PnL ₹": "₹{:,.0f}",
+        "PnL %": "{:.2f}%"
+    })
 )
+
+# -----------------------------
+# DISPLAY - PORTFOLIO TABLE
+# -----------------------------
+st.subheader("💰 Portfolio Performance (Using Units)")
+st.dataframe(styled_portfolio_df.tail(50), width="stretch")
