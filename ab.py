@@ -16,15 +16,18 @@ st.title("📊 MF Tracker")
 # -----------------------------
 # CACHE
 # -----------------------------
-@st.cache_data
+@st.cache_data(ttl=3600)
 def fetch_data(ticker, period):
-    data = yf.Ticker(ticker).history(period=period)
-    data.index = data.index.tz_localize(None)  # 🔥 FIX HERE
+    data = yf.download(ticker, period=period, progress=False, threads=False)
+    data.index = data.index.tz_localize(None)
     return data
 
-@st.cache_data
+@st.cache_data(ttl=3600)
 def fetch_info(ticker):
-    return yf.Ticker(ticker).info
+    try:
+        return yf.Ticker(ticker).info
+    except Exception:
+        return {}
 
 # -----------------------------
 # INPUT
