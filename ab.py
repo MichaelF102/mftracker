@@ -19,9 +19,17 @@ st.title("📊 MF Tracker")
 @st.cache_data(ttl=3600)
 def fetch_data(ticker, period):
     data = yf.download(ticker, period=period, progress=False, threads=False)
+    
+    if data.empty or "Close" not in data:
+        return pd.DataFrame(columns=["Close"])  # ✅ prevents scalar issue
+    
     data.index = data.index.tz_localize(None)
     return data
 
+if hist.empty or nifty.empty or sensex.empty:
+    st.error("Data could not be fetched. Try again later.")
+    st.stop()
+    
 @st.cache_data(ttl=3600)
 def fetch_info(ticker):
     try:
