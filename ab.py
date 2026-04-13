@@ -26,9 +26,6 @@ def fetch_data(ticker, period):
     data.index = data.index.tz_localize(None)
     return data
 
-if hist.empty or nifty.empty or sensex.empty:
-    st.error("Data could not be fetched. Try again later.")
-    st.stop()
     
 @st.cache_data(ttl=3600)
 def fetch_info(ticker):
